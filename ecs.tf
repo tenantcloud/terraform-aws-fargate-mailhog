@@ -36,6 +36,10 @@ resource "aws_ecs_task_definition" "app" {
       {
         "containerPort": 22,
         "hostPort": 22
+      },
+      {
+        "containerPort": 1025,
+        "hostPort": 1025
       }
     ]
   }
