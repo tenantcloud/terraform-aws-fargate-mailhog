@@ -38,8 +38,8 @@ resource "aws_ecs_task_definition" "app" {
         "hostPort": 22
       },
       {
-        "containerPort": 1025,
-        "hostPort": 1025
+        "containerPort": ${var.smtp_port},
+        "hostPort": ${var.smtp_port}
       }
     ]
   }
@@ -67,7 +67,13 @@ resource "aws_ecs_service" "main" {
     container_port   = var.app_port
   }
 
-  depends_on = [aws_lb_listener.front_end_https, aws_iam_role_policy_attachment.ecs_task_execution_role]
+  load_balancer {
+    target_group_arn = aws_lb_target_group.smtp.id
+    container_name   = "${var.project}-app"
+    container_port   = var.smtp_port
+  }
+
+  depends_on = [aws_lb_listener.front_end_https, aws_lb_listener.smtp, aws_iam_role_policy_attachment.ecs_task_execution_role]
 
   tags = {
     Name = "${var.project}-service"

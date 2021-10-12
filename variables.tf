@@ -15,6 +15,11 @@ variable "aws_region" {
   default     = "us-west-2"
 }
 
+variable "region" {
+  description = "AWS Infrastructure Region"
+  default     = "us-west-2"
+}
+
 variable "az_count" {
   description = "Number of AZs to cover in a given region"
   default     = "2"
@@ -28,6 +33,11 @@ variable "app_image" {
 variable "app_port" {
   description = "Port exposed by the docker image to redirect traffic to"
   default     = 8025
+}
+
+variable "smtp_port" {
+  description = "Smtp port exposed by the docker image to redirect traffic to"
+  default     = 1025
 }
 
 variable "app_count" {
