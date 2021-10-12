@@ -57,3 +57,41 @@ resource "aws_lb_listener" "front_end_https" {
     target_group_arn = aws_lb_target_group.app.id
   }
 }
+
+resource "aws_lb" "smtp" {
+  name            = "${var.project}-smtp-lb"
+  load_balancer_type = "network"
+  subnets         = var.subnets_public
+  tags = {
+    Name = "${var.project}-smtp-lb"
+  }
+}
+
+resource "aws_lb_target_group" "smtp" {
+  name        = "${var.project}-smtp-tg"
+  port        = var.smtp_port
+  protocol    = "TCP"
+  vpc_id      = var.vpc_id
+  target_type = "ip"
+
+  health_check {
+    healthy_threshold   = "3"
+    interval            = "30"
+    protocol            = "TCP"
+    unhealthy_threshold = "3"
+  }
+  tags = {
+    Name = "${var.project}-smtp-tg"
+  }
+}
+
+resource "aws_lb_listener" "smtp" {
+  load_balancer_arn = aws_lb.smtp.id
+  port              = var.smtp_port
+  protocol          = "TCP"
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.smtp.id
+  }
+}
